@@ -15,6 +15,7 @@ A lightweight utility tool that toggles the terrain grid without all the extra c
 - 🔒 Does **not** get deactivated when pressing `Escape`.
 - ⚡ Provides the same result as opening the Layers tool and disabling every option except **Terrain Grid**.
 - ⌨️ Shortcut: `Shift + F`
+- 🔧 You can customise the shortcut by editing the `config.txt` file in the mod folder.
 
 Originally Made by CarbonAnanas, All Rights and Credit goes to them.
 
