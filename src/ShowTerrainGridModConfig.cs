@@ -12,6 +12,7 @@ public class ShowTerrainGridModConfig : IModConfig
     public static readonly int ConfigVersion = 1;
 
     public bool IsEnabled { get; set; }
+    public string Shortcut { get; set; } = "Shift+F";
 
 
     #region Serialization stuff

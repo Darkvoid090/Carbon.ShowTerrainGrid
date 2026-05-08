@@ -42,7 +42,7 @@ public sealed class ShowTerrainGridMod : IMod, IDisposable
     /// Mod config. If set, its instance will be registered in the resolver.
     /// If mafi-serializable, it will be persisted though saves and this property will be set after load if a config of the same type was loaded from the save file.
     /// </summary>
-    public Option<IConfig> ModConfig => this.modConfig;
+    public Option<IConfig> ModConfig => Option<IConfig>.Some(this.modConfig);
 
 
     private readonly ShowTerrainGridModConfig modConfig;
