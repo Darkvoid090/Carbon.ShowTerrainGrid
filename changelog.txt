@@ -1,0 +1,17 @@
+=======================
+Carbon.ShowTerrainGrid
+Changelog
+=======================
+Version 1.0.0
+
+- Initial release.
+- Fixed Manifest implementaion for U4.
+- Fixed Broken Icon.
+- Updated hotkey, now SHIFT+F, to reduce accidental toggling.
+
+=======================
+Version 1.0.1
+
+- Mod can now be safely removed from saves.
+
+=======================

@@ -1,0 +1,120 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <DebugType>none</DebugType>
+    <OutputPath>bin\Carbon.QuickBuildUnlocked\</OutputPath>
+
+    <AssemblyName>Carbon.ShowTerrainGrid</AssemblyName>
+    <RootNamespace>Carbon.ShowTerrainGrid</RootNamespace>
+    <OutputType>Library</OutputType>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Update="manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Reference Include="Mafi">
+      <HintPath>$(COI_ROOT)\Captain of Industry_Data\Managed\Mafi.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Mafi.Core">
+      <HintPath>$(COI_ROOT)\Captain of Industry_Data\Managed\Mafi.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Mafi.Base">
+      <HintPath>$(COI_ROOT)\Captain of Industry_Data\Managed\Mafi.Base.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Mafi.Unity">
+      <HintPath>$(COI_ROOT)\Captain of Industry_Data\Managed\Mafi.Unity.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(COI_ROOT)\Captain of Industry_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <Target Name="GenerateManifest" BeforeTargets="Build">
+    <PropertyGroup>
+      <ManifestJson>
+        {
+        "id": "$(AssemblyName)",
+        "version": "$(Version)",
+        "display_name": "Show Terrain Grid",
+        "description_short": "Adds A tool to show terrain grid only",
+        "description_long": "Adds A tool to show terrain grid only",
+        "authors": ["CarbonAnanas", "MaD_MaN"],
+        "primary_dlls": ["Carbon.ShowTerrainGrid.dll"],
+        "min_game_version": "0.8.0",
+        "max_verified_game_version": "0.8.4",
+        "mod_dependencies": [],
+        "optional_mod_dependencies": [],
+        "incompatible_mods": [],
+        "non_locking_dll_load": true,
+        "can_add_to_saved_game": true,
+        "can_remove_from_saved_game": true
+        }
+      </ManifestJson>
+    </PropertyGroup>
+
+    <WriteLinesToFile
+        File="$(MSBuildProjectDirectory)\manifest.json"
+        Lines="$(ManifestJson)"
+        Overwrite="true" />
+  </Target>
+  <Target Name="UpdateManifestVersion" BeforeTargets="Build">
+
+    <ReadLinesFromFile File="$(MSBuildProjectDirectory)\manifest.json">
+      <Output TaskParameter="Lines" ItemName="ManifestLines" />
+    </ReadLinesFromFile>
+
+    <ItemGroup>
+      <UpdatedManifestLines Include="@(ManifestLines)">
+        <Text>$([System.Text.RegularExpressions.Regex]::Replace('%(Identity)', '&quot;version&quot;\s*:\s*&quot;[^&quot;]+&quot;', '&quot;version&quot;: &quot;$(Version)&quot;'))</Text>
+      </UpdatedManifestLines>
+    </ItemGroup>
+
+    <WriteLinesToFile
+        File="$(MSBuildProjectDirectory)\manifest.json"
+        Lines="@(UpdatedManifestLines->'%(Text)')"
+        Overwrite="true" />
+
+  </Target>
+  <Target Name="PostBuildCopy" AfterTargets="Build">
+
+    <PropertyGroup>
+      <ModOutput>$(APPDATA)\Captain of Industry\Mods\Carbon.ShowTerrainGrid</ModOutput>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(ModOutput)" />
+
+    <Copy SourceFiles="$(TargetPath)"
+          DestinationFolder="$(ModOutput)"
+          OverwriteReadOnlyFiles="true"
+          SkipUnchangedFiles="false" />
+
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\manifest.json"
+          DestinationFolder="$(ModOutput)"
+          OverwriteReadOnlyFiles="true"
+          SkipUnchangedFiles="false" />
+
+
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\changelog.txt"
+          DestinationFolder="$(ModOutput)"
+          OverwriteReadOnlyFiles="true"
+          SkipUnchangedFiles="false"
+          Condition="Exists('$(MSBuildProjectDirectory)\changelog.txt')" />
+
+    <Touch Files="$(ModOutput)\$(AssemblyName).dll;$(ModOutput)\manifest.json;$(ModOutput)\changelog.txt"
+           Time="$([System.DateTime]::Now)"
+           AlwaysCreate="false" />
+
+  </Target>
+</Project>

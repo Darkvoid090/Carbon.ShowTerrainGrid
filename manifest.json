@@ -1,0 +1,17 @@
+{
+"id": "Carbon.ShowTerrainGrid",
+"version": "1.0.1",
+"display_name": "Show Terrain Grid",
+"description_short": "Adds A tool to show terrain grid only",
+"description_long": "Adds A tool to show terrain grid only",
+"authors": ["CarbonAnanas", "MaD_MaN"],
+"primary_dlls": ["Carbon.ShowTerrainGrid.dll"],
+"min_game_version": "0.8.0",
+"max_verified_game_version": "0.8.4",
+"mod_dependencies": [],
+"optional_mod_dependencies": [],
+"incompatible_mods": [],
+"non_locking_dll_load": true,
+"can_add_to_saved_game": true,
+"can_remove_from_saved_game": true
+}
