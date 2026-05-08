@@ -1,6 +1,6 @@
 {
 "id": "Carbon.ShowTerrainGrid",
-"version": "1.0.1",
+"version": "1.0.2",
 "display_name": "Show Terrain Grid",
 "description_short": "Adds A tool to show terrain grid only",
 "description_long": "Adds A tool to show terrain grid only",

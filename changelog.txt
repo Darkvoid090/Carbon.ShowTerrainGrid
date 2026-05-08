@@ -15,3 +15,8 @@ Version 1.0.1
 - Mod can now be safely removed from saves.
 
 =======================
+Version 1.0.1
+
+- Implemented custom mod hotkey, change it in the config.txt located in the mod folder.
+
+=======================
