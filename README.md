@@ -6,6 +6,13 @@
 </p>
 
 ---
+# Show Terrain Grid
+
+<p align="center">
+  <img src="Thumbnail.png" width="256"/>
+</p>
+
+---
 
 A lightweight utility tool that toggles the terrain grid without all the extra clutter from the normal Layers tool.
 
