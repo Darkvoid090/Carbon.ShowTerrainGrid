@@ -17,6 +17,11 @@ public sealed class ShowTerrainGridMod : IMod, IDisposable
     /// Human-readable name of the mod. This value will be showed in-game.
     /// </summary>    
     public ModManifest Manifest { get; }
+
+    /// <summary>
+    /// The loaded mod instance. Needed as the owner when registering key bindings (IShortcutsRegistry.Add).
+    /// </summary>
+    internal static ShowTerrainGridMod Instance { get; private set; }
     public ModJsonConfig JsonConfig { get; }
     public string Name => this.GetType().Namespace.Replace('.', '-');
     public void Dispose() { }
@@ -55,6 +60,7 @@ public sealed class ShowTerrainGridMod : IMod, IDisposable
     /// </summary>
     public ShowTerrainGridMod(ModManifest manifest,ShowTerrainGridModConfig modConfig)
     {
+        Instance = this;
         Manifest = manifest;
         JsonConfig = new ModJsonConfig(this);
         this.modConfig = modConfig;

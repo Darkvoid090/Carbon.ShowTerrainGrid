@@ -20,3 +20,7 @@ Version 1.0.2
 - Implemented custom mod hotkey, change it in the config.txt located in the mod folder.
 
 =======================
+Version 1.0.3
+
+ - Compatiblity with update 4.3 (v0.8.8).
+ - New feature: Set mod keybind directly from game keybind settings, default is still SHIFT+F.

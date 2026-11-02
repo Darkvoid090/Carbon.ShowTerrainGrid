@@ -10,7 +10,6 @@ using Mafi.Unity.UiStatic.Toolbar;
 using Mafi.Unity.UiToolkit.Component;
 using Mafi.Unity.UiToolkit.Library;
 using Mafi.Unity.Utils;
-using System.IO;
 
 namespace Carbon.ShowTerrainGrid;
 
@@ -22,26 +21,6 @@ internal class ShowTerrainGridToolController : IToolbarItemController
     /// Whether the controller can be activated and should be displayed in the menu.
     /// </summary>
     public bool IsVisible => true;
-    private readonly string shortcut;
-    private static string LoadShortcut()
-    {
-        string path = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Captain of Industry",
-            "Mods",
-            "Carbon.ShowTerrainGrid",
-            "config.txt");
-
-        if (!File.Exists(path))
-        {
-            File.WriteAllText(path, "Shift+F");
-            return "Shift+F";
-        }
-
-        return File.ReadAllText(path).Trim();
-    }
-
-
     /// <summary>
     /// Describes how the toolbar item interacts with the input system.
     /// </summary>
@@ -62,80 +41,32 @@ internal class ShowTerrainGridToolController : IToolbarItemController
     private readonly IActivator terrainGridActivator;
 
 
-    public ShowTerrainGridToolController(ShowTerrainGridModConfig modConfig, ToolbarHud toolbar, TerrainRenderer terrainRenderer)
+    public ShowTerrainGridToolController(ShowTerrainGridModConfig modConfig, ToolbarHud toolbar, TerrainRenderer terrainRenderer, IShortcutsRegistry shortcutsRegistry)
     {
         this.modConfig = modConfig;
         this.terrainGridActivator = terrainRenderer.CreateGridLinesActivator();
 
         LocStr toolName = Loc.Str(id: "Toggle Terrain Grid", enUs: "Toggle Terrain Grid", comment: "ShowTerrainGridTool");
-        EnsureShortcutFileExists();
-        this.shortcut = LoadShortcut();
-        Button toolButton = toolbar.AddToolButton(name: toolName, controller: this, iconAssetPath: "Assets/Unity/UserInterface/Toolbar/TerrainGrid.svg", order: 1f, shortcut: GetShortcut);
+
+        // Since game 0.8.8 key bindings are KbHandles registered with IShortcutsRegistry.
+        // The player can rebind the key in the Controls tab (listed under this mod's name).
+        Option<KbHandle> shortcut = Option<KbHandle>.None;
+        ShowTerrainGridMod mod = ShowTerrainGridMod.Instance;
+        if (mod != null)
+        {
+            // Id must be "<mod id>.<Name>" where Name has only letters, digits and underscores.
+            KbHandle toggleKey = KbHandleBuilder
+                .Start(mod.Manifest.Id + ".ToggleTerrainGrid", "Toggle Terrain Grid")
+                .SetPrimary(KbModifiers.Shift, UnityEngine.KeyCode.F)
+                .SetGroup(KbGroups.Tools)
+                .SetMode(ShortcutMode.Game)
+                .Build();
+            shortcutsRegistry.Add(mod, toggleKey);
+            shortcut = Option<KbHandle>.Some(toggleKey);
+        }
+
+        Button toolButton = toolbar.AddToolButton(name: toolName, controller: this, iconAssetPath: "Assets/Unity/UserInterface/Toolbar/TerrainGrid.svg", order: 1f, shortcut: shortcut);
         toolButton.Selected(this.modConfig.IsEnabled);
-    }
-
-    private static void EnsureShortcutFileExists()
-    {
-        string path = Path.Combine(
-         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-         "Captain of Industry",
-         "Mods",
-         "Carbon.ShowTerrainGrid",
-         "config.txt");
-
-        if (!File.Exists(path))
-        {
-            File.WriteAllText(path, "Shift+F");
-        }
-    }
-    private static UnityEngine.KeyCode ParseKey(string keyName, UnityEngine.KeyCode fallback)
-    {
-        try
-        {
-            return (UnityEngine.KeyCode)Enum.Parse(
-                typeof(UnityEngine.KeyCode),
-                keyName,
-                ignoreCase: true);
-        }
-        catch
-        {
-            return fallback;
-        }
-    }
-    private KeyBindings GetShortcut(ShortcutsManager shortcutsManager)
-    {
-        string shortcut = (this.shortcut ?? "Shift+F")
-            .Trim()
-            .Replace(" ", "");
-
-        string[] parts = shortcut.Split('+');
-
-        UnityEngine.KeyCode modifier = UnityEngine.KeyCode.None;
-        UnityEngine.KeyCode key = UnityEngine.KeyCode.F;
-
-        if (parts.Length == 1)
-        {
-            key = ParseKey(parts[0], UnityEngine.KeyCode.F);
-        }
-        else if (parts.Length >= 2)
-        {
-            string mod = parts[0].ToUpperInvariant();
-
-            if (mod == "SHIFT")
-                modifier = UnityEngine.KeyCode.LeftShift;
-            else if (mod == "CTRL" || mod == "CONTROL")
-                modifier = UnityEngine.KeyCode.LeftControl;
-            else if (mod == "ALT")
-                modifier = UnityEngine.KeyCode.LeftAlt;
-
-            key = ParseKey(parts[1], UnityEngine.KeyCode.F);
-        }
-
-        return KeyBindings.FromPrimaryKeys(
-            KbCategory.Tools,
-            ShortcutMode.Game,
-            modifier,
-            key);
     }
 
     /// <summary>
